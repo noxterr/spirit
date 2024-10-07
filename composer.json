@@ -13,5 +13,7 @@
             "email": "mirko.dalfarra@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "illuminate/support": "^11.26"
+    }
 }
