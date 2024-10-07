@@ -1,0 +1,17 @@
+{
+    "name": "noxterr/spirit",
+    "description": "A package that handles working with files with B2 (backblaze) in an elegant manner",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Noxterr\\Spirit\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mirko Dal Fara",
+            "email": "mirko.dalfarra@gmail.com"
+        }
+    ],
+    "require": {}
+}
