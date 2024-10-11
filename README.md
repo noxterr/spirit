@@ -27,7 +27,6 @@ php artisan vendor:publish --provider="Noxterr\Spirit\SpiritServiceProvider"
 Set your Backblaze B2 credentials in the `.env` file:
 
 ```env
-B2_MASTER_KEY=`YOUR_B2_MASTER_KEY` # This is used only once
 B2_KEY=`YOUR_B2_KEY` # A master key isn't reccomended. Create a key with the privileges you need
 B2_BUCKET_NAME='YOUR_B2_BUCKET_NAME' # The globally-available name you gave your bucket
 B2_BUCKET_ID=`YOUR_B2_BUCKET_ID`
@@ -38,7 +37,6 @@ Then, run the command to get your
 At last, change your `.env` again:
 
 ```env
-B2_MASTER_KEY=`` # Either put nothing or remove this altogether. It was needed only to get the URL
 B2_API_URL=`YOUR_B2_API_URL` # You get this after calling the command
 ```
 

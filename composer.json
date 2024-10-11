@@ -13,7 +13,18 @@
             "email": "mirko.dalfarra@gmail.com"
         }
     ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "15.x-dev"
+        },
+        "laravel": {
+            "providers": [
+                "Noxterr\\Spirit\\SpiritServiceProvider"
+            ]
+        }
+    },
     "require": {
-        "illuminate/support": "^11.26"
+        "illuminate/support": "^11.26",
+        "illuminate/console": "^11.26"
     }
 }
