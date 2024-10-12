@@ -4,13 +4,6 @@ namespace Noxterr\Spirit;
 
 class Native {
 
-    public static function init()
-    {
-        return [
-            'list_buckets' => '/b2api/v3/b2_list_buckets',
-        ];
-    }
-
     public static function fetch($url, $settings)
     {
         $http = new \Noxterr\Spirit\Helper\Curl([

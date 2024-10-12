@@ -12,14 +12,15 @@ class SpiritServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands(
-                commands: [
-                    SpiritInitializerCommand::class,
-                ],
-            );
+            $this->commands([
+                SpiritInitializerCommand::class,
+            ]);
         }
-    }
 
+        $this->publishes([
+            __DIR__ . '/../config/spirit.php' => config_path('spirit.php'),
+        ], 'config');
+    }
     /**
      * Register any application services.
      *
