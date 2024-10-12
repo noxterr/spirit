@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Noxterr\Spirit\Providers;
+namespace Noxterr\Spirit;
 
 use Illuminate\Support\ServiceProvider;
 use Noxterr\Spirit\Console\Commands\SpiritInitializerCommand;
 
-final class SpiritServiceProvider extends ServiceProvider
+class SpiritServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
@@ -18,5 +18,15 @@ final class SpiritServiceProvider extends ServiceProvider
                 ],
             );
         }
+    }
+
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        echo "Hello from SpiritServiceProvider";
     }
 }

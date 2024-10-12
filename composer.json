@@ -2,6 +2,7 @@
     "name": "noxterr/spirit",
     "description": "A package that handles working with files with B2 (backblaze) in an elegant manner",
     "license": "MIT",
+    "version": "1.0",
     "autoload": {
         "psr-4": {
             "Noxterr\\Spirit\\": "src/"
