@@ -8,12 +8,13 @@ class Native {
     {
         $http = new \Noxterr\Spirit\Helper\Curl([
             'url' => config('spirit.base_url') . $url,
-            'protocol' => "URL",
+            'protocol' => $settings['protocol'] ?? 'GET',
             'header' => [
                 'Accept: application/json',
                 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8',
                 'Authorization: Bearer ' . config('spirit.key')
             ],
+            'post_data' => $settings['post_data'] ?? []
         ]);
 
         try {
