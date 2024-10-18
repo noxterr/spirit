@@ -11,8 +11,7 @@ class Native {
             'protocol' => $settings['protocol'] ?? 'GET',
             'header' => [
                 'Accept: application/json',
-                'Content-Type: application/x-www-form-urlencoded;charset=UTF-8',
-                'Authorization: Bearer ' . config('spirit.key')
+                ...$settings['header'] ?? []
             ],
             'post_data' => $settings['post_data'] ?? []
         ]);
@@ -27,7 +26,10 @@ class Native {
 
             return json_decode($data);
         } catch (\Exception $e) {
-            return $e->getMessage();
+            return json_encode([
+                'message' => $e->getMessage(),
+                'errcode' => 1
+            ]);
         }
     }
 }

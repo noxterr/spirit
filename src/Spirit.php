@@ -3,6 +3,8 @@
 
 namespace Noxterr\Spirit;
 
+use Noxterr\Spirit\Helper\B2;
+
 class Spirit
 {
     /**
@@ -13,11 +15,49 @@ class Spirit
     const VERSION = '1.0.0';
 
     /**
+     * The Spirit main object.
+     *
+     * @var mixed
+     */
+    protected $spirit;
+
+    /**
+     * The Spirit constructor, to setup default variables.
+     */
+    public function __construct($settings = [])
+    {
+        $this->setup($settings);
+    }
+
+    /**
+     * The Setup function for default variables.
+     *
+     */
+    protected function setup($settings = [])
+    {
+        $b2 = Base::authorizeAccount(
+            config('spirit.account_id'),
+            config('spirit.key')
+        );
+
+        if (
+            isset($settings['has_multiple_keys']) &&
+            $settings['has_multiple_keys'])
+        {
+            Base::setupMultipleKeys();
+        }
+
+        $this->spirit = $b2;
+
+        $this->spirit->bucket_id = config('spirit.bucket_id');
+    }
+
+    /**
      * Spirit show all the buckets in the account
      *
      * @return array
      */
-    public static function listBuckets()
+    public function listBuckets()
     {
         $cr = new \Noxterr\Spirit\Helper\ClassReturn();
 
@@ -45,7 +85,7 @@ class Spirit
      * @return array
      */
 
-    public static function listFiles(string $bucket_id)
+    public function listFiles(string $bucket_id)
     {
         $cr = new \Noxterr\Spirit\Helper\ClassReturn();
 
@@ -66,5 +106,31 @@ class Spirit
         }
 
         return $response;
+    }
+
+    /**
+     * Get the data in order to upload a file.
+     * Endpoint is - b2_get_upload_url
+     *
+     * @return mixed
+     */
+    public function getUploadUrl(): mixed
+    {
+        if (! $this->spirit) {
+            $this->setup();
+        }
+
+        $result = Native::fetch("/b2api/v3/b2_get_upload_url?bucketId={$this->spirit->bucket_id}", [
+            'method' => 'GET',
+            'header' => [
+                "Authorization: {$this->spirit->authorization_token}"
+            ]
+        ]);
+
+        if ($result->errcode != 0) {
+            return $result;
+        }
+
+        return null;
     }
 }

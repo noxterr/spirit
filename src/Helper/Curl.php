@@ -12,7 +12,7 @@ class Curl
     public $header_size;
     public $http_code;
     protected $url;
-    protected $protocol;
+    protected $method;
     protected $header = null;
     protected $debug;
     protected $header_info = null;
@@ -37,7 +37,7 @@ class Curl
                 $this->header = $params['header'];
             }
         }
-        $this->protocol = isset($params['protocol']) ? $params['protocol'] : 'GET';
+        $this->method = isset($params['method']) ? $params['method'] : 'GET';
 
         // Trace header in cURL
         $this->header_info = isset($params['header_info']) ? $params['header_info'] : true;
@@ -87,7 +87,7 @@ class Curl
             CURLOPT_MAXREDIRS => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => $this->protocol,
+            CURLOPT_CUSTOMREQUEST => $this->method,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => $this->post_data,
             CURLINFO_HEADER_OUT => $this->header_info,
@@ -115,7 +115,7 @@ class Curl
         }
 
         if ($this->debug) {
-            echo "{$this->protocol} {$this->url}" . \PHP_EOL;
+            echo "{$this->method} {$this->url}" . \PHP_EOL;
             echo "Header: " . json_encode($this->header) . \PHP_EOL;
             echo "Post data: " . json_encode($this->post_data) . \PHP_EOL;
         }
