@@ -128,9 +128,76 @@ class Spirit
         ]);
 
         if ($result->errcode != 0) {
-            return $result;
+            // Setup the response
+            $parsed_upload_file = \Noxterr\Spirit\Helper\FileUpload::parseGetUploadUrl($result);
+
+            $this->spirit->file = $parsed_upload_file;
+
+            return $parsed_upload_file;
         }
 
         return null;
+    }
+
+    /**
+     * Upload a file to the bucket.
+     * Endpoint is - b2_upload_file
+     *
+     * @param mixed $file
+     * @return mixed
+     */
+    public function uploadFile($file): mixed
+    {
+        if (! $this->spirit->file) {
+            $this->getUploadUrl();
+        }
+
+        $uploadUrl = $this->spirit->file->upload_url;
+
+        $file_content = file_get_contents($file->path);
+
+        $result = Native::fetch($uploadUrl->upload_url, [
+            'method' => 'POST',
+            'header' => [
+                "Authorization: {$uploadUrl->authorization_token}",
+                "Content-Type: application/octet-stream",
+                "X-Bz-File-Name: {$file->name}",
+                "X-Bz-Content-Sha1: " . sha1_file($file_content)
+            ],
+            'post_data' => $file_content
+        ]);
+
+        return $result;
+    }
+
+    /**
+     * Download a file from the bucket.
+     * Endpoint is - b2_download_file_by_id
+     *
+     * @param string $file_name
+     * @return mixed
+     */
+    public function downloadFile(string $file_name): mixed
+    {
+        $cr = new \Noxterr\Spirit\Helper\ClassReturn();
+
+        $response = Native::fetch( $this->spirit->download_url . '/file/'. config('spirit.bucket_name') . "/{$file_name}", [
+            'post_data' => [
+                'bucketName' => config('spirit.bucket_name'),
+                'fileName' => $file_name
+            ]
+        ]);
+
+        if (isset($response->fileContent)) {
+            $cr->errcode = 0;
+            $cr->data = $response->fileContent;
+        }
+
+        else {
+            $cr->errcode = 1;
+            $cr->data = $response;
+        }
+
+        return $response;
     }
 }

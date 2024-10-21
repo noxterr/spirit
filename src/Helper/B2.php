@@ -23,6 +23,8 @@ class B2
 
     public $error = null;
 
+    public $file = null;
+
     public static function parseAuthorizeAccount($response): B2
     {
         $b2 = new self();
