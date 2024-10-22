@@ -60,9 +60,9 @@ $file = $spirit->downloadFile($file_name);
 If you have multiple keys, at this moment, you can decice to split the flow between read-only and write-only keys.
 
 Add to your `.env` the keys
-```bash
-B2_READ_KEY_ID=`` # This key has read-only (download, list files, etc) permissions
-B2_WRITE_KEY_ID=`` # This key has write-only (upload, delete files, etc) permissions
+```env
+B2_READ_KEY_ID=`YOUR_B2_READ_ONLY_KEY` # This key has read-only (download, list files, etc) permissions
+B2_WRITE_KEY_ID=`YOUR_B2_WRITE_ONLY_KEY` # This key has write-only (upload, delete files, etc) permissions
 ```
 
 In your code, use it like so
