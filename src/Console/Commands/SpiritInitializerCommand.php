@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-// This will probably be deprecated for \Noxterr\Spirit\Base for authorization services
-
 namespace Noxterr\Spirit\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -20,6 +18,7 @@ final class SpiritInitializerCommand extends Command
     {
         $this->info("Setting up the migrations for the Spirit package...");
 
+        // TODO: Got to understand if this is the right way to publish the migrations, because I feel like this is already done
         $this->call('vendor:publish', [
             '--provider' => 'Noxterr\Spirit\SpiritServiceProvider',
             '--tag' => 'migrations',

@@ -44,7 +44,17 @@ class Spirit
             isset($settings['has_multiple_keys']) &&
             $settings['has_multiple_keys'])
         {
+            // Enable multiple keys
             Base::setupMultipleKeys();
+
+            // Authorize keys for operation
+            // I can specify the usage of multiple keys here anyway.
+            // If they are not set, the default keys will be used.
+            $b2 = Base::authorizeAccount(
+                config('spirit.account_id'),
+                config('spirit.key'),
+                $settings
+            );
         }
 
         $this->spirit = $b2;
@@ -117,7 +127,9 @@ class Spirit
     public function getUploadUrl(): mixed
     {
         if (! $this->spirit) {
-            $this->setup();
+            $this->setup([
+                'use_read_key' => true,
+            ]);
         }
 
         $result = Native::fetch("/b2api/v3/b2_get_upload_url?bucketId={$this->spirit->bucket_id}", [

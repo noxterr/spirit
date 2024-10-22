@@ -29,9 +29,17 @@ class Base
      *
      * @return B2
      */
-    public static function authorizeAccount($application_key_id, $application_key): B2
+    public static function authorizeAccount($application_key_id, $application_key, $settings = []): B2
     {
         $response = new ClassReturn();
+
+        if (config('spirit.has_multiple_keys')) {
+            if ($settings['use_read_key']) {
+                $application_key = config('spirit.read_key_id');
+            } elseif ($settings['use_write_key']) {
+                $application_key = config('spirit.write_key_id');
+            }
+        }
 
         $http = new Curl([
             'url' => self::DEFAULT_URL . '/b2api/v2/b2_authorize_account',

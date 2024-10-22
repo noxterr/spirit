@@ -27,17 +27,10 @@ php artisan vendor:publish --provider="Noxterr\Spirit\SpiritServiceProvider"
 Set your Backblaze B2 credentials in the `.env` file:
 
 ```env
-B2_KEY=`YOUR_B2_KEY` # A master key isn't reccomended. Create a key with the privileges you need
+B2_KEY=`YOUR_B2_KEY` # You can put your master key for now. Creating a key with the privileges you need also works
 B2_BUCKET_NAME=`YOUR_B2_BUCKET_NAME` # The globally-available name you gave your bucket
 B2_BUCKET_ID=`YOUR_B2_BUCKET_ID`
-```
-
-Then, run the command to get your
-
-At last, change your `.env` again:
-
-```env
-B2_API_URL=`YOUR_B2_API_URL` # You get this after calling the command
+B2_ACCOUNT_ID=`YOUR_B2_ACCOUNT_ID`
 ```
 
 ## Usage
@@ -47,7 +40,9 @@ B2_API_URL=`YOUR_B2_API_URL` # You get this after calling the command
 ```php
 use Noxterr\Spirit;
 
-Spirit::upload($filePath, $content);
+$spirit = new Spirit();
+
+$uploaded_file = $spirit->uploadFile($file);
 ```
 
 ### Downloading a File
@@ -55,7 +50,33 @@ Spirit::upload($filePath, $content);
 ```php
 use Noxterr\Spirit;
 
-$file = Spirit::download($filePath);
+$spirit = new Spirit();
+
+$file = $spirit->downloadFile($file_name);
+```
+
+### Using more keys
+
+If you have multiple keys, at this moment, you can decice to split the flow between read-only and write-only keys.
+
+Add to your `.env` the keys
+```bash
+B2_READ_KEY_ID=`` # This key has read-only (download, list files, etc) permissions
+B2_WRITE_KEY_ID=`` # This key has write-only (upload, delete files, etc) permissions
+```
+
+In your code, use it like so
+
+```php
+use Noxterr\Spirit;
+
+$spirit = new Spirit([
+    'has_multiple_keys' => true,
+]);
+
+$uploaded_file = $spirit->uploadFile($file);
+
+$downloaded_file = $spirit->downloadFile($uploaded_file->name);
 ```
 
 ## License
