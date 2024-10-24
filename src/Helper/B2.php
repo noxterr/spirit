@@ -29,19 +29,45 @@ class B2
     {
         $b2 = new self();
 
-        if (! isset($response->accountId) || $response->errcode != 1) {
+        if (! isset($response->accountId) || (isset($response->code) && $response->code == 401)) {
             $b2->failed = true;
             $b2->error = 'Failed to authorize account';
             return $b2;
         }
 
-        $b2->account_id = $response->accountId;
-        $b2->api_url = $response->apiInfo->storageApi->apiUrl;
-        $b2->s3_api_url = $response->apiInfo->storageApi->s3ApiUrl;
-        $b2->download_url = $response->apiInfo->storageApi->downloadUrl;
-        $b2->capabilities = $response->apiInfo->storageApi->capabilities;
-        $b2->application_key_expiration_timestamp = $response->applicationKeyExpirationTimestamp;
-        $b2->authorization_token = $response->authorizationToken;
+        // I get a different response from the API than the documentation (Postman)
+        // Instead of getting `apiInfo`, I get `allowed` and the keys are different
+        // I will check those uniquely
+
+        if (isset($response->allowed)) {
+            if (isset($response->allowed->capabilities)) {
+                $b2->capabilities = $response->allowed->capabilities;
+            }
+
+            $b2->account_id = $response->accountId;
+            $b2->api_url = $response->apiUrl;
+            $b2->s3_api_url = $response->s3ApiUrl;
+            $b2->download_url = $response->downloadUrl;
+            $b2->authorization_token = $response->authorizationToken;
+        }
+
+        elseif (isset($response->apiInfo)) {
+            if (isset($response->apiInfo->capabilities)) {
+                $b2->capabilities = $response->apiInfo->storageApi->capabilities;
+            }
+
+            $b2->account_id = $response->accountId;
+            $b2->api_url = $response->apiInfo->storageApi->apiUrl;
+            $b2->s3_api_url = $response->apiInfo->storageApi->s3ApiUrl;
+            $b2->download_url = $response->apiInfo->storageApi->downloadUrl;
+            $b2->application_key_expiration_timestamp = $response->applicationKeyExpirationTimestamp;
+            $b2->authorization_token = $response->authorizationToken;
+        }
+
+        else {
+            $b2->failed = true;
+            $b2->error = 'Failed to authorize account';
+        }
 
         return $b2;
     }

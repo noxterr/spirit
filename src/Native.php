@@ -2,13 +2,17 @@
 
 namespace Noxterr\Spirit;
 
+use Noxterr\Spirit\Helper\ClassReturn;
+
 class Native {
 
     public static function fetch($url, $settings)
     {
+        $classReturn = new ClassReturn();
+
         $http = new \Noxterr\Spirit\Helper\Curl([
             'url' => config('spirit.base_url') . $url,
-            'protocol' => $settings['protocol'] ?? 'GET',
+            'method' => $settings['method'] ?? 'GET',
             'header' => [
                 'Accept: application/json',
                 ...$settings['header'] ?? []
@@ -24,12 +28,12 @@ class Native {
 
             $data = $http->getData();
 
-            return json_decode($data);
+            $classReturn->data = json_decode($data);
         } catch (\Exception $e) {
-            return json_encode([
-                'message' => $e->getMessage(),
-                'errcode' => 1
-            ]);
+            $classReturn->message = $e->getMessage();
+            $classReturn->errcode = 1;
         }
+
+        return $classReturn;
     }
 }

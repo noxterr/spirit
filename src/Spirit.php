@@ -57,6 +57,16 @@ class Spirit
             );
         }
 
+        if ($b2->failed) {
+            throw new \Exception($b2->error);
+        }
+
+        else {
+            config([
+                'spirit.base_url' => $b2->api_url,
+            ]);
+        }
+
         $this->spirit = $b2;
 
         $this->spirit->bucket_id = config('spirit.bucket_id');
@@ -72,7 +82,7 @@ class Spirit
         $cr = new \Noxterr\Spirit\Helper\ClassReturn();
 
         $response = \Noxterr\Spirit\Native::fetch( '/b2api/v3/b2_list_buckets', [
-            'protocol' => 'GET'
+            'method' => 'GET'
         ]);
 
         if (isset($response->buckets)) {
@@ -127,9 +137,7 @@ class Spirit
     public function getUploadUrl(): mixed
     {
         if (! $this->spirit) {
-            $this->setup([
-                'use_read_key' => true,
-            ]);
+            $this->setup();
         }
 
         $result = Native::fetch("/b2api/v3/b2_get_upload_url?bucketId={$this->spirit->bucket_id}", [
@@ -139,9 +147,9 @@ class Spirit
             ]
         ]);
 
-        if ($result->errcode != 0) {
+        if ($result->errcode == 0) {
             // Setup the response
-            $parsed_upload_file = \Noxterr\Spirit\Helper\FileUpload::parseGetUploadUrl($result);
+            $parsed_upload_file = \Noxterr\Spirit\Helper\FileUpload::parseGetUploadUrl($result->data);
 
             $this->spirit->file = $parsed_upload_file;
 
@@ -164,19 +172,32 @@ class Spirit
             $this->getUploadUrl();
         }
 
-        $uploadUrl = $this->spirit->file->upload_url;
+        $uploader = $this->spirit->file;
 
         $file_content = file_get_contents($file->path);
 
-        $result = Native::fetch($uploadUrl->upload_url, [
+        // Since I am uploading and the upload process uses the custom upload URL, instead of the base URL
+        // I will just change the config and revert the edit at the end
+
+        config([
+            'spirit.base_url' => $uploader->upload_url
+        ]);
+
+        // Emtpty string for the URl since I don't need anything after the base URL
+        $result = Native::fetch('', [
             'method' => 'POST',
             'header' => [
-                "Authorization: {$uploadUrl->authorization_token}",
+                "Authorization: {$uploader->authorization_token}",
                 "Content-Type: application/octet-stream",
                 "X-Bz-File-Name: {$file->name}",
-                "X-Bz-Content-Sha1: " . sha1_file($file_content)
+                "X-Bz-Content-Sha1: " . sha1($file_content)
             ],
             'post_data' => $file_content
+        ]);
+
+        // Revert the config
+        config([
+            'spirit.base_url' => $this->spirit->api_url
         ]);
 
         return $result;

@@ -17,11 +17,8 @@ return [
     |
     */
 
-    'spirit' => [
-        'bucket_id' => env('B2_BUCKET_ID'),
-        'bucket_name' => env('B2_BUCKET_NAME'),
-        'key' => env('B2_KEY'),
-        'account_id' => env('B2_ACCOUNT_ID'),
-        'application_key_id' => env('B2_ACCOUNT_ID'),
-    ],
+    'bucket_id' => env('B2_BUCKET_ID'),
+    'bucket_name' => env('B2_BUCKET_NAME'),
+    'key' => env('B2_KEY'),
+    'account_id' => env('B2_ACCOUNT_ID'),
 ];
