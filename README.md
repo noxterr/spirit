@@ -1,6 +1,14 @@
-# b2-spirit
+<p align="center">
+    <img src="/art/logo.png" width="50%" alt="b2 spirit logo">
+</p>
 
-b2-spirit is a Laravel package designed to handle file transfers with Backblaze B2 Cloud Storage.
+<p align="center">
+    <a href="https://packagist.org/packages/noxterr/spirit"><img src="https://img.shields.io/packagist/dt/noxterr/spirit" alt="Total Downloads"></a>
+    <a href="https://packagist.org/packages/noxterr/spirit"><img src="https://img.shields.io/packagist/v/noxterr/spirit" alt="Latest Stable Version"></a>
+    <a href="https://packagist.org/packages/noxterr/spirit"><img src="https://img.shields.io/packagist/l/noxterr/spirit" alt="License"></a>
+</p>
+
+B2 Spirit is a Laravel package designed to handle file transfers with Backblaze B2 Cloud Storage.
 
 ## Features
 
@@ -38,7 +46,7 @@ B2_ACCOUNT_ID=`YOUR_B2_ACCOUNT_ID`
 ### Uploading a File
 
 ```php
-use Noxterr\Spirit;
+use Noxterr\Spirit\Spirit;
 
 $spirit = new Spirit();
 
@@ -48,12 +56,39 @@ $uploaded_file = $spirit->uploadFile($file);
 ### Downloading a File
 
 ```php
-use Noxterr\Spirit;
+use Noxterr\Spirit\Spirit;
 
 $spirit = new Spirit();
 
 $file = $spirit->downloadFile($file_name);
 ```
+
+### Handling respones
+
+Every time an action is carried out on Spirit, a response is provided to the user under the form of a so-called ClassReturn.
+
+This is an object that returns standardized data, making it easier to interface with your custom application.
+
+The object is as follows
+
+```php
+
+// In another class
+$response = new \ClassReturn();
+
+return $response;
+
+/** This returns
+ * {
+ *    errcode: 1 | 0,
+ *    message: string | null (contains the error information if needed)
+ *    data: mixed | null -> contains the data from a response
+ * }
+*/
+```
+
+With this flow, you can always ensure to check errors like so `if ($response->errcode != 0) { Error handling }`, so is easy to use.
+
 
 ### Using more keys
 
@@ -68,7 +103,7 @@ B2_WRITE_KEY_ID=`YOUR_B2_WRITE_ONLY_KEY` # This key has write-only (upload, dele
 In your code, use it like so
 
 ```php
-use Noxterr\Spirit;
+use Noxterr\Spirit\Spirit;
 
 $spirit = new Spirit([
     'has_multiple_keys' => true,
